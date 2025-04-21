@@ -4,7 +4,7 @@ import { CalendarDaysIcon, ChartBarIcon, FaceSmileIcon, MapIcon, PhotoIcon } fro
 
 export default function PostInput() {
   return (
-    <div className="flex space-x-5 p-3 ">
+    <div className="flex space-x-5 p-3 border-b border-gray-100 ">
       <Image
         src={"/assets/beee.jpg"}
         width={44}
@@ -17,7 +17,7 @@ export default function PostInput() {
           className="resize-none outline-none w-full min-h-[50px] text-lg"
           placeholder="whats buzzing"
         />
-        <div className="flex justify-between pt-5">
+        <div className="flex justify-between pt-5  border-t border-gray-100">
           <div className="flex space-x-1.5">
             <PhotoIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
             <ChartBarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />

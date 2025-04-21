@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function Widget() {
   return (
-    <div className=" p-3 hidden lg:flex flex-col space-y-5 w-[400px]">
+    <div className=" p-3 hidden lg:flex flex-col space-y-5 w-[400px] ps-10">
       
       <div className=" bg-[#EFF3F4] text-[#89959D] h-[44px] flex items-center space-x-3 rounded-full pl-5">
         <MagnifyingGlassCircleIcon className="w-[20px] h-[20px]" />

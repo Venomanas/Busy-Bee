@@ -13,7 +13,7 @@ import { HomeIcon,
 export default function Sidebar() {
   return (
     <nav className="hidden sm:flex flex-col sticky top-0 p-3 h-screen xl:ml-20 xl:mr-10 ">
-        <div className="relative h-full ">
+        <div className="relative h-full flex flex-col items-center">
             <div className="py-3">
             <Image src={'/assets/beee.jpg'} width={48} height={48} alt="logo" />
             </div>
@@ -30,7 +30,19 @@ export default function Sidebar() {
             Bumble
         </button>
         </ul>
-        <div className="absolute bottom-0">user info</div>
+        <div className="absolute bottom-3 flex items-center space-x-2 xl:p-3 xl:pe-6 hover:bg-gray-500 hover:bg-opacity-10 rounded-full transition cursor-pointer  ">
+           <Image 
+                    src={'/assets/profile-pic.jpg'}   
+                    width={36}
+                    height={36}
+                    alt="profile"
+                    className="w-10 h-10 rounded-full"
+                    /> 
+          <div className= "hidden xl:flex flex-col text-sm">
+            <span className="font-bold ">Guest</span>
+            <span className="text-gray-500">@guest@1234</span>
+          </div>
+          </div>
     </div>
     </nav>
   );
