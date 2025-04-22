@@ -1,27 +1,38 @@
-"use client"
-import React , { useState }from 'react'
-import Image from 'next/image'
-import { CalendarDaysIcon, ChartBarIcon, FaceSmileIcon, MapIcon, PhotoIcon } from '@heroicons/react/24/outline'
-import { addDoc,collection, serverTimestamp, Timestamp } from 'firebase/firestore'
-import { db } from '@/firebase'
-import { useSelector} from 'react-redux'
+"use client";
+import React, { useState } from "react";
+import Image from "next/image";
+import {
+  CalendarDaysIcon,
+  ChartBarIcon,
+  FaceSmileIcon,
+  MapIcon,
+  PhotoIcon,
+} from "@heroicons/react/24/outline";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  Timestamp,
+} from "firebase/firestore";
+import { db } from "@/firebase";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 export default function PostInput() {
-  const [text, setText] = useState("")
-  const user = useSelector((state: RootState) => state.user)
+  const [text, setText] = useState("");
+  const user = useSelector((state: RootState) => state.user);
 
-  async function sendPost(){
+  async function sendPost() {
     addDoc(collection(db, "posts"), {
       text: text,
       name: user.name,
       username: user.username,
       timestamp: serverTimestamp(),
-      likes:[],
-      comments:[],
+      likes: [],
+      comments: [],
     });
 
-    setText('')
+    setText("");
   }
   return (
     <div className="flex space-x-5 p-3 border-b border-gray-100 ">
@@ -36,10 +47,10 @@ export default function PostInput() {
         <textarea
           className="resize-none outline-none w-full min-h-[50px] text-lg"
           placeholder="whats buzzing"
-          onChange={(e)=>setText(e.target.value)}
+          onChange={e => setText(e.target.value)}
           value={text}
         />
-        <div className="flex justify-between pt-5  border-t border-gray-100">
+        <div className="flex justify-between pt-5 border-t border-gray-100">
           <div className="flex space-x-1.5">
             <PhotoIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
             <ChartBarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
@@ -47,10 +58,13 @@ export default function PostInput() {
             <CalendarDaysIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
             <MapIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
           </div>
-          <button className='bg-[#F4AF01] rounded-full  shadow-md p-4 text-white text-small w-[80px] h-[56px]cursor-pointer 
-          disabled:bg-opacity-60'
-          disabled={!text}
-          onClick={() => sendPost()}>Bumble</button>
+          <button
+            className="bg-[#F4AF01] rounded-full shadow-md p-4 text-white text-small w-[80px] h-[56px] cursor-pointer disabled:bg-opacity-60"
+            disabled={!text}
+            onClick={() => sendPost()}
+          >
+            Bumble
+          </button>
         </div>
       </div>
     </div>

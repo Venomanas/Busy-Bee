@@ -18,7 +18,7 @@ export default function SignUpModal() {
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
   const [showPassword,setShowPassword] = useState(false);
-  const isOpen = useSelector((state: RootState) => state.modal.SignUpModalOpen);
+  const isOpen = useSelector((state: RootState) => state.modal.signUpModalOpen);
   const dispatch : AppDispatch = useDispatch ();
     async function handleGuestLogin() {
           await signInWithEmailAndPassword(auth, "jacky12345@gmail.com","123456789")
