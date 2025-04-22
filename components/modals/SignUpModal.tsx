@@ -1,50 +1,64 @@
-"use client";
-
 import React , {useEffect, useState} from "react";
 import { Modal } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { openSignUpModal, closeSignUpModal } from "@/redux/slices/modalSlice";
-import { AppDispatch } from "@/redux/store"; 
+import { AppDispatch, RootState } from "@/redux/store"; 
 import {
   EyeIcon,
   EyeSlashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth }  from "@/firebase";
 import { signInUser } from "@/redux/slices/userSlice";
+import { updateProfile } from "firebase/auth";
 
 export default function SignUpModal() {
-
+  const [name,setName] = useState('')
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
   const [showPassword,setShowPassword] = useState(false);
-  const isOpen = useSelector((state: any) => state.modal.SignUpModalOpen);
-  const dispatch = useDispatch<AppDispatch>();
-
+  const isOpen = useSelector((state: RootState) => state.modal.SignUpModalOpen);
+  const dispatch : AppDispatch = useDispatch ();
+    async function handleGuestLogin() {
+          await signInWithEmailAndPassword(auth, "jacky12345@gmail.com","123456789")
+      }
+  
  async function handleSignUp() {
     const userCredentials = await createUserWithEmailAndPassword(
       auth,
       email,
       password
-    )
+    );
+    await updateProfile(userCredentials.user, {
+      displayName: name
+    });
+
+    dispatch(
+      signInUser({
+        name: userCredentials.user.displayName,
+        username: userCredentials.user.email!.split("@")[0],
+        email: userCredentials.user.email,
+        uid: userCredentials.user.uid,
+      })
+    );
   }
 
   useEffect(()=>{
     const unSubscribe =  onAuthStateChanged(auth, (currentUser) => {
-      if(!currentUser) return console.log(currentUser)
-
+      if(!currentUser) 
+        return console.log(currentUser)
       //handle redux  actions
         dispatch(signInUser(
           {
-            name: "",
+            name: currentUser.displayName,
             username: currentUser.email!.split("@")[0],
             email: currentUser.email,
             uid: currentUser.uid
           }
         ))
       })
-      return unSubscribe
+      return unSubscribe;
   },[])
 
   return (
@@ -72,6 +86,8 @@ export default function SignUpModal() {
                 className="w-full h-[54px] border border-gray-200 outline-none pl-3 rounded-[4px] focus:border-[#F4AF01] transition "
                 type="text"
                 placeholder="Name"
+                onChange={(e) => setName(e.target.value)}
+                value={name}
               />
               <input
                 className="w-full h-[54px] border border-gray-200 outline-none pl-3 rounded-[4px] focus:border-[#F4AF01] transition "
@@ -101,7 +117,7 @@ export default function SignUpModal() {
               Sign Up
             </button>
             <span className="mb-5 text-sm  text-center block"> or </span>
-            <button className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full">
+            <button className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full" onClick={()=>handleGuestLogin()}>
               Log In as guest
             </button>
           </div>
