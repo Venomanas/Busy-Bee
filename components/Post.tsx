@@ -1,18 +1,23 @@
 'use client'
-import { openCommentModal, setCommnetDetails } from "@/redux/slices/modalSlice";
+import { openCommentModal, openLoginModal, setCommnetDetails } from "@/redux/slices/modalSlice";
 import {
   ArrowUpTrayIcon,
   ChartBarIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   HeartIcon,
 } from "@heroicons/react/24/outline";
-import { DocumentData, Timestamp } from "firebase/firestore";
+
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
+
+import { arrayRemove, arrayUnion, DocumentData, Timestamp, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Moment from "react-moment";
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { doc } from "firebase/firestore";
+import { db } from "@/firebase";
+import { RootState } from "@/redux/store";
 interface PostProps {
   data: DocumentData;
   id: string;
@@ -20,25 +25,49 @@ interface PostProps {
 
 export default function Post({ data , id}: PostProps) {
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
+
+async function likePost() {
+
+  if(!user.username){
+    dispatch(openLoginModal())
+    return;
+  }
+
+  const postRef = doc(db, "posts", id);
+
+  if (data.likes.includes(user.uid)) {
+    await updateDoc(postRef, {
+      likes: arrayRemove(user.uid),
+    });
+  } else {
+    await updateDoc(postRef, {
+      likes: arrayUnion(user.uid),
+    });
+  }
+}
 
   return (
     <div className="border-b border-gray-100">
-
       <Link href={"/" + id}>
-      <PostHeader
-        username={data.username}
-        name={data.name}
-        timestamp={data.timestamp}
-        text={data.text}
-      />
+        <PostHeader
+          username={data.username}
+          name={data.name}
+          timestamp={data.timestamp}
+          text={data.text}
+        />
       </Link>
 
-      
       <div className="ml-16 p-3 flex space-x-14">
         <div className="relative">
           <ChatBubbleOvalLeftEllipsisIcon
             className="w-[22px] h-[22px] cursor-pointer hover:text-[#F4AF01] transition"
             onClick={() => {
+
+              if(!user.username){
+                dispatch(openLoginModal())
+                return;
+              }
               dispatch(
                 setCommnetDetails({
                   name: data.name,
@@ -47,18 +76,37 @@ export default function Post({ data , id}: PostProps) {
                   text: data.text,
                 })
               );
-              dispatch(openCommentModal())
+              dispatch(openCommentModal());
             }}
           />
+          {
+              data.comments.length > 0 &&
           <span className="absolute text-xs top-1 -right-3">
-            {data.comments?.length || 0}
+            {data.comments.length}
           </span>
+          }
         </div>
         <div className="relative">
-          <HeartIcon className="w-[22px] h-[22px] cursor-pointer hover:text-[#f787f3] transition" />
-          <span className="absolute text-xs top-1 -right-3">
-            {data.likes?.length || 0}
-          </span>
+          {data.likes.includes(user.uid) ? (
+            <HeartSolidIcon
+              className="w-[22px] h-[22px] cursor-pointer text-pink-500
+          "
+              onClick={() => likePost()}
+            />
+          ) : (
+            <HeartIcon
+              className="w-[22px] h-[22px] cursor-pointer hover:text-[#f787f3] transition 
+          "
+              onClick={() => likePost()}
+            />
+          )}
+          {
+            data.likes.length > 0 &&  
+            <span className="absolute text-xs top-1 -right-3">
+            {data.likes.length}
+            </span>
+          }
+         
         </div>
         <div className="relative">
           <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed" />
