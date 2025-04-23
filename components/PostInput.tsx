@@ -18,7 +18,11 @@ import { db } from "@/firebase";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-export default function PostInput() {
+interface PostInputProps {
+  insideModal?: boolean;
+}
+
+export default function PostInput({ insideModal }: PostInputProps) {
   const [text, setText] = useState("");
   const user = useSelector((state: RootState) => state.user);
 
@@ -31,22 +35,22 @@ export default function PostInput() {
       likes: [],
       comments: [],
     });
-
     setText("");
   }
+
   return (
     <div className="flex space-x-5 p-3 border-b border-gray-100 ">
       <Image
-        src={"/assets/beee.jpg"}
+        src={insideModal ? "/assets/profile-pic.jpg" : "/assets/beee.jpg"}
         width={44}
         height={44}
-        alt="logo"
-        className="w-11 h-11"
+        alt={insideModal ? "profile-pic.jpg" : "logo"}
+        className="w-11 h-11 z-10"
       />
       <div className="w-full">
         <textarea
           className="resize-none outline-none w-full min-h-[50px] text-lg"
-          placeholder="whats buzzing"
+          placeholder={insideModal?"Send your reply":"whats happening"}
           onChange={e => setText(e.target.value)}
           value={text}
         />

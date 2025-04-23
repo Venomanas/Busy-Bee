@@ -56,8 +56,9 @@ export default function Post({ data }: PostProps) {
 interface PostHeaderProps {
   username: string;
   name: string;
-  timestamp: Timestamp;
+  timestamp?: Timestamp;
   text: string;
+  replyTo?: string ;
 }
 
 export function PostHeader({
@@ -65,6 +66,7 @@ export function PostHeader({
   name,
   timestamp,
   text,
+  replyTo,
 }: PostHeaderProps) {
   return (
     <div className="flex p-3 space-x-5">
@@ -73,7 +75,7 @@ export function PostHeader({
         width={44}
         height={44}
         alt="profile-pic"
-        className="w-11 h-11"
+        className="w-11 h-11 z-10"
       />
 
       <div className="text-[15px] flex flex-col space-y-1.5">
@@ -84,11 +86,21 @@ export function PostHeader({
           <span className="inline-block whitespace-nowrap overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px] min-[500]:max-w-[140px] sm:max-w-[160px]">
             {username}
           </span>
-          <span> · </span>
-          {timestamp && <Moment fromNow>{timestamp.toDate()}</Moment>}
+          {timestamp && (
+            <>
+              <span> · </span>
+              <Moment fromNow>{timestamp.toDate()}</Moment>
+            </>
+          )}
         </div>
 
         <span>{text}</span>
+
+        <span className="text-[15px] text-[#707E89]">
+          {" "}
+          Replying to
+          <span className="text-[#F4af01]"> gurst123 </span>
+        </span>
       </div>
     </div>
   );

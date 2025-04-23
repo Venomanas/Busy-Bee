@@ -3,6 +3,8 @@ import Sidebar from "@/components/Sidebar";
 import PostFeed from "@/components/PostFeed";
 import Widget from "@/components/Widget"
 import Login from "@/components/login";
+import CommentModal from "@/components/modals/CommentModal";
+
 export default function Home() {
   return (
     <>
@@ -12,6 +14,8 @@ export default function Home() {
       <PostFeed />
       <Widget />
     </div>
+
+     <CommentModal />
      <Login />
     </>
   );

@@ -37,7 +37,7 @@ export default function LoginModal() {
         onClose={() => dispatch(closeLoginModal())}
         className="flex justify-center items-center"
       >
-        <div className="w-full h-full sm:w-[600px] sm:h-fit bg-white sm:rounded-xl">
+        <div className="w-full h-full sm:w-[600px] sm:h-fit bg-white sm:rounded-xl outline-none">
           <XMarkIcon
             className="w-7 mt-5 ms-5 cursor-pointer"
             onClick={() => dispatch(closeLoginModal())}

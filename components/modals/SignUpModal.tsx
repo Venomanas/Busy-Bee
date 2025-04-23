@@ -75,9 +75,10 @@ export default function SignUpModal() {
         onClose={() => dispatch(closeSignUpModal())}
         className="flex justify-center items-center"
       >
-        <div className="w-full h-full sm:w-[600px] sm:h-fit bg-white sm:rounded-xl">
-          <XMarkIcon className="w-7 mt-5 ms-5 cursor-pointer"
-              onClick={() => dispatch(closeSignUpModal())}
+        <div className="w-full h-full sm:w-[600px] sm:h-fit bg-white sm:rounded-xl outline-none">
+          <XMarkIcon
+            className="w-7 mt-5 ms-5 cursor-pointer"
+            onClick={() => dispatch(closeSignUpModal())}
           />
           <div className="pt-10 pb-20 px-4 sm:px-20">
             <h1 className="text-3xl font-bold mb-10"> Create your account </h1>
@@ -86,14 +87,14 @@ export default function SignUpModal() {
                 className="w-full h-[54px] border border-gray-200 outline-none pl-3 rounded-[4px] focus:border-[#F4AF01] transition "
                 type="text"
                 placeholder="Name"
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
                 value={name}
               />
               <input
                 className="w-full h-[54px] border border-gray-200 outline-none pl-3 rounded-[4px] focus:border-[#F4AF01] transition "
                 type="email"
                 placeholder="Email"
-                onChange={(e)=> setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 value={email}
               />
               <div className="w-full h-[54px] border border-gray-200   rounded-[4px] focus-within:border-[#F4AF01] transition flex items-center overflow-hidden pr-3">
@@ -101,7 +102,7 @@ export default function SignUpModal() {
                   className="w-full h-full ps-3 outline-none "
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  onChange={(e)=> setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   value={password}
                 />
                 <div
@@ -112,12 +113,17 @@ export default function SignUpModal() {
                 </div>
               </div>
             </div>
-            <button className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full"
-            onClick={()=> handleSignUp()}>
+            <button
+              className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full"
+              onClick={() => handleSignUp()}
+            >
               Sign Up
             </button>
             <span className="mb-5 text-sm  text-center block"> or </span>
-            <button className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full" onClick={()=>handleGuestLogin()}>
+            <button
+              className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full"
+              onClick={() => handleGuestLogin()}
+            >
               Log In as guest
             </button>
           </div>
