@@ -87,8 +87,8 @@ export default async function page({ params }: PageProps) {
           </div>
             {post?.comments.map((comment : Comment) => (<Comment  name={comment.name} username={comment.username} text={comment.text}/>))}
         </div>
-      </div>
       <Widget />
+      </div>
 
       <Login />
     </>

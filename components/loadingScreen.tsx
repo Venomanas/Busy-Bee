@@ -11,7 +11,7 @@ export default function LoadingScreen() {
 
   return (
     <div
-      className={`fixed top-0 left-0 bottom-0 right-0 bg-white  flex items-center justify-center ${
+      className={`fixed top-0 left-0 bottom-0 right-0 bg-white  flex items-center justify-center transition ${
         loadingScreenOpen ? "opacity-100 z-50" : "opacity-0 -z-50"
       }`}
     >

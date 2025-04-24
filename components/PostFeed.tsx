@@ -11,18 +11,22 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "@/firebase";
+import { closeLoadingScreen } from "@/redux/slices/loadingSlice";
+import { useDispatch } from "react-redux";
 
 export default function PostFeed() {
   const [posts, setPosts] = useState<
     QueryDocumentSnapshot<DocumentData, DocumentData>[]
   >([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
-
     const unsubscribe = onSnapshot(q, snapshot => {
       const snapshotDocs = snapshot.docs;
       setPosts(snapshotDocs);
+
+      dispatch(closeLoadingScreen())
     });
 
     return unsubscribe;
