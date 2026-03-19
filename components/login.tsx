@@ -8,7 +8,6 @@ import { RootState } from '@/redux/store';
 
 export default function Login() {
   const name = useSelector((state: RootState) => state.user.username)
-  console.log( name )
 
   return (
     !name &&

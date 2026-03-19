@@ -12,15 +12,14 @@ export default function LoginModal() {
   const [showPassword, setShowPassword] = useState(false);
   const [email,setEmail]=useState("");
   const [password,setPassword] = useState('');
-  const isOpen = useSelector((state: any) => state.modal.LoginModalOpen);
+  const [error, setError] = useState<string | null>(null);
+  const isOpen = useSelector((state: any) => state.modal.loginModalOpen);
   const dispatch:AppDispatch = useDispatch();
 
     async function handleLogin(){
-      signInWithEmailAndPassword(auth, email , password)
-    }
-
-    async function handleGuestLogin() {
-        await signInWithEmailAndPassword(auth, "jacky12345@gmail.com","123456789")
+      setError(null);
+      await signInWithEmailAndPassword(auth, email , password);
+      dispatch(closeLoginModal());
     }
 
   return (
@@ -70,17 +69,17 @@ export default function LoginModal() {
             </div>
             <button
               className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full"
-              onClick={() => handleLogin()}
+              onClick={async () => {
+                try {
+                  await handleLogin();
+                } catch (e: any) {
+                  setError(e?.message ?? "Login failed.");
+                }
+              }}
             >
               Log In
             </button>
-            <span className="mb-5 text-sm text-center block">or</span>
-            <button
-              className="bg-[#F4Af01] text-white h-[48px] rounded-full shadow-md mb-5 w-full"
-              onClick={() => handleGuestLogin()}
-            >
-              Log In as guest
-            </button>
+            {error ? <div className="text-sm text-red-600">{error}</div> : null}
           </div>
         </div>
       </Modal>

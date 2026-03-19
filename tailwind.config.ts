@@ -8,6 +8,26 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
+      borderRadius: {
+        "app": "var(--radius)",
+      },
+      boxShadow: {
+        "soft": "0 10px 30px rgba(0,0,0,0.08)",
+      },
+      colors: {
+        app: {
+          bg: "hsl(var(--bg))",
+          fg: "hsl(var(--fg))",
+          muted: "hsl(var(--muted))",
+          card: "hsl(var(--card))",
+          border: "hsl(var(--border))",
+          brand: "hsl(var(--brand))",
+        },
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

@@ -5,19 +5,20 @@ import {
   ChartBarIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   HeartIcon,
+  BookmarkIcon,
 } from "@heroicons/react/24/outline";
 
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 
-import { arrayRemove, arrayUnion, DocumentData, Timestamp, updateDoc } from "firebase/firestore";
+import { DocumentData, Timestamp, deleteDoc, doc, getDoc, increment, onSnapshot, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Moment from "react-moment";
 import { useDispatch, useSelector } from "react-redux";
-import { doc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { RootState } from "@/redux/store";
+import { toggleBookmark } from "@/lib/bookmarks";
 interface PostProps {
   data: DocumentData;
   id: string;
@@ -26,6 +27,26 @@ interface PostProps {
 export default function Post({ data , id}: PostProps) {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
+  const [liked, setLiked] = React.useState(false);
+  const [bookmarked, setBookmarked] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!user.uid) {
+      setLiked(false);
+      return;
+    }
+    const likeRef = doc(db, "posts", id, "likes", user.uid);
+    return onSnapshot(likeRef, (snap) => setLiked(snap.exists()));
+  }, [id, user.uid]);
+
+  React.useEffect(() => {
+    if (!user.uid) {
+      setBookmarked(false);
+      return;
+    }
+    const bmRef = doc(db, "bookmarks", user.uid, "items", id);
+    return onSnapshot(bmRef, (snap) => setBookmarked(snap.exists()));
+  }, [id, user.uid]);
 
 async function likePost() {
 
@@ -35,25 +56,27 @@ async function likePost() {
   }
 
   const postRef = doc(db, "posts", id);
-
-  if (data.likes.includes(user.uid)) {
-    await updateDoc(postRef, {
-      likes: arrayRemove(user.uid),
-    });
+  const likeRef = doc(db, "posts", id, "likes", user.uid);
+  const existing = await getDoc(likeRef);
+  if (existing.exists()) {
+    await deleteDoc(likeRef);
+    await updateDoc(postRef, { likesCount: increment(-1), updatedAt: serverTimestamp() });
   } else {
-    await updateDoc(postRef, {
-      likes: arrayUnion(user.uid),
-    });
+    await setDoc(likeRef, { createdAt: serverTimestamp() });
+    await updateDoc(postRef, { likesCount: increment(1), updatedAt: serverTimestamp() });
   }
 }
+
+  const commentsCount = typeof data.commentsCount === "number" ? data.commentsCount : (data.comments?.length ?? 0);
+  const likesCount = typeof data.likesCount === "number" ? data.likesCount : (data.likes?.length ?? 0);
 
   return (
     <div className="border-b border-gray-100">
       <Link href={"/" + id}>
         <PostHeader
-          username={data.username}
-          name={data.name}
-          timestamp={data.timestamp}
+          username={data.authorUsername ?? data.username}
+          name={data.authorName ?? data.name}
+          timestamp={data.createdAt ?? data.timestamp}
           text={data.text}
         />
       </Link>
@@ -70,8 +93,8 @@ async function likePost() {
               }
               dispatch(
                 setCommnetDetails({
-                  name: data.name,
-                  username: data.username,
+                  name: data.authorName ?? data.name,
+                  username: data.authorUsername ?? data.username,
                   id: id,
                   text: data.text,
                 })
@@ -80,14 +103,14 @@ async function likePost() {
             }}
           />
           {
-              data.comments.length > 0 &&
+              commentsCount > 0 &&
           <span className="absolute text-xs top-1 -right-3">
-            {data.comments.length}
+            {commentsCount}
           </span>
           }
         </div>
         <div className="relative">
-          {data.likes.includes(user.uid) ? (
+          {liked ? (
             <HeartSolidIcon
               className="w-[22px] h-[22px] cursor-pointer text-pink-500
           "
@@ -101,9 +124,9 @@ async function likePost() {
             />
           )}
           {
-            data.likes.length > 0 &&  
+            likesCount > 0 &&  
             <span className="absolute text-xs top-1 -right-3">
-            {data.likes.length}
+            {likesCount}
             </span>
           }
          
@@ -112,7 +135,17 @@ async function likePost() {
           <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed" />
         </div>
         <div className="relative">
-          <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed" />
+          <BookmarkIcon
+            className={`w-[22px] h-[22px] cursor-pointer transition ${bookmarked ? "text-[#F4AF01]" : "hover:text-[#F4AF01]"}`}
+            onClick={async (e) => {
+              e.preventDefault();
+              if (!user.uid) {
+                dispatch(openLoginModal());
+                return;
+              }
+              await toggleBookmark(user.uid, id);
+            }}
+          />
         </div>
       </div>
     </div>

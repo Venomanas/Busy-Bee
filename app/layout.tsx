@@ -1,10 +1,19 @@
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fredoka } from "next/font/google";
 import "./globals.css";
 import Storeprovider from "@/redux/Storeprovider";
+import AuthProvider from "@/app/providers/AuthProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+const bodyFont = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+const displayFont = Fredoka({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,10 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Storeprovider>
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={`${bodyFont.variable} ${displayFont.variable}`}>
+      <body className="min-h-screen bg-app-bg text-app-fg">
+        <Storeprovider>
+          <AuthProvider>{children}</AuthProvider>
+        </Storeprovider>
+      </body>
     </html>
-  </Storeprovider>
   );
 }

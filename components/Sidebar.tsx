@@ -1,6 +1,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { HomeIcon,
             HashtagIcon,
             UserIcon, 
@@ -20,14 +21,14 @@ export default function Sidebar() {
           <Image src={"/assets/beee.jpg"} width={48} height={48} alt="logo" />
         </div>
         <ul>
-          <SidebarLink Icon={HomeIcon} text="Home" />
-          <SidebarLink Icon={HashtagIcon} text="Explore" />
-          <SidebarLink Icon={BellIcon} text="Notification" />
-          <SidebarLink Icon={FireIcon} text="Friends" />
-          <SidebarLink Icon={InboxIcon} text="Messages" />
-          <SidebarLink Icon={BookmarkIcon} text="Bookmarks" />
-          <SidebarLink Icon={UserIcon} text="Profile" />
-          <SidebarLink Icon={EllipsisHorizontalCircleIcon} text="More" />
+          <SidebarLink href="/" Icon={HomeIcon} text="Home" />
+          <SidebarLink href="/explore" Icon={HashtagIcon} text="Explore" />
+          <SidebarLink href="/notifications" Icon={BellIcon} text="Notification" />
+          <SidebarLink href="/friends" Icon={FireIcon} text="Friends" />
+          <SidebarLink href="/messages" Icon={InboxIcon} text="Messages" />
+          <SidebarLink href="/bookmarks" Icon={BookmarkIcon} text="Bookmarks" />
+          <SidebarLink href="/profile" Icon={UserIcon} text="Profile" />
+          <SidebarLink href="/more" Icon={EllipsisHorizontalCircleIcon} text="More" />
           <button className="hidden xl:block bg-[#f4af01] w-[200px] h-[52px] rounded-full text-white font-medium cursor-pointer shadow-md mt-2">
             Bumble
           </button>
@@ -42,6 +43,7 @@ export default function Sidebar() {
 
 interface SidebarLinkProps {
   text: string;
+  href: string;
   Icon: React.ForwardRefExoticComponent<
     Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
       title?: string;
@@ -50,11 +52,16 @@ interface SidebarLinkProps {
   >;
 }
 
-function SidebarLink({ text, Icon } : SidebarLinkProps) {
+function SidebarLink({ text, Icon, href } : SidebarLinkProps) {
   return (
-    <li className="flex items-center text-xl mb-2 space-x-3 p-2.5">
-      <Icon className="h-7" />
-     <span className="hidden xl:block"> {text}</span> 
+    <li>
+      <Link
+        href={href}
+        className="flex items-center text-xl mb-2 space-x-3 p-2.5 rounded-full hover:bg-app-muted transition-colors"
+      >
+        <Icon className="h-7" />
+        <span className="hidden xl:block">{text}</span>
+      </Link>
     </li>
   );
 }

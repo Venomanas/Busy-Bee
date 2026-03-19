@@ -4,7 +4,9 @@ const initialState = {
     name : "",
     username: "",
     email: "",
-    uid: ""
+    uid: "",
+    photoURL: "",
+    bio: "",
 }
 
 const userSlice = createSlice({
@@ -16,12 +18,16 @@ const userSlice = createSlice({
         state.username = action.payload.username
         state.email = action.payload.email
         state.uid = action.payload.uid
+        state.photoURL = action.payload.photoURL ?? ""
+        state.bio = action.payload.bio ?? ""
     },
     signOutUser: (state) => {
         state.name = ""
         state.username =""
         state.email = ""
         state.uid = ""
+        state.photoURL = ""
+        state.bio = ""
     }
   }
 });

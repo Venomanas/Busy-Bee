@@ -10,11 +10,10 @@ import {
 } from "@heroicons/react/24/outline";
 import {
   addDoc,
-  arrayUnion,
   collection,
   doc,
+  increment,
   serverTimestamp,
-  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase";
@@ -43,26 +42,31 @@ export default function PostInput({ insideModal }: PostInputProps) {
 
     await addDoc(collection(db, "posts"), {
       text: text,
-      name: user.name,
-      username: user.username,
-      timestamp: serverTimestamp(),
-      likes: [],
-      comments: [],
+      authorUid: user.uid,
+      authorName: user.name,
+      authorUsername: user.username,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      likesCount: 0,
+      commentsCount: 0,
     });
     setText("");
   }
 
   async function sendComment() {
-    const postRef = doc(db,'posts', commentDetails.id)
-
-    await updateDoc(postRef,{
-      comments: arrayUnion({
-        name:  user.name,
-        username: user.username,
-        text: text,
-
-      })
-    })
+    if(!user.username){
+      dispatch(openLoginModal())
+      return;
+    }
+    const postRef = doc(db,'posts', commentDetails.id);
+    await addDoc(collection(db, "posts", commentDetails.id, "comments"), {
+      authorUid: user.uid,
+      authorName: user.name,
+      authorUsername: user.username,
+      text,
+      createdAt: serverTimestamp(),
+    });
+    await updateDoc(postRef, { commentsCount: increment(1), updatedAt: serverTimestamp() });
 
     setText('')
     dispatch(closeCommentModal());
@@ -95,7 +99,7 @@ export default function PostInput({ insideModal }: PostInputProps) {
           <button
             className="bg-[#F4AF01] rounded-full shadow-md p-4 text-white text-small w-[80px] h-[56px] cursor-pointer disabled:bg-opacity-60"
             disabled={!text}
-            onClick={() => insideModal ? sendPost() : sendPost()}
+            onClick={() => (insideModal ? sendComment() : sendPost())}
           >
             Bumble
           </button>

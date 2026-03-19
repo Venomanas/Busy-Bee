@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run"
   },
   "resolutions": {
     "react": "18.2.0",
@@ -19,6 +20,7 @@
     "@mui/material": "^7.0.2",
     "@reduxjs/toolkit": "^2.7.0",
     "firebase": "^11.6.0",
+    "framer-motion": "^12.38.0",
     "next": "14.1.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -26,12 +28,13 @@
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.19.37",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.0"
   }
 }

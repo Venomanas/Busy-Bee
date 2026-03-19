@@ -2,4 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+:root{
+  --bg: 0 0% 100%;
+  --fg: 210 25% 10%;
+  --muted: 210 16% 96%;
+  --card: 0 0% 100%;
+  --border: 210 16% 92%;
+  --brand: 42 96% 49%;
+  --radius: 18px;
+}
+
+html, body{
+  height: 100%;
+}
+
+body{
+  background: hsl(var(--bg));
+  color: hsl(var(--fg));
+  font-family: var(--font-body);
+}
+
+/* Respect reduced motion (Framer Motion will follow this too) */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
 
