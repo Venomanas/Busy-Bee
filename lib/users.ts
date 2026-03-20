@@ -7,6 +7,12 @@ import {
   runTransaction,
   updateDoc,
   Timestamp,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "@/firebase";
 
@@ -31,16 +37,22 @@ function normalizeUsername(raw: string) {
 export async function reserveUsername(usernameRaw: string, uid: string) {
   const username = normalizeUsername(usernameRaw);
   if (!/^[a-z0-9_]{3,20}$/.test(username)) {
-    throw new Error("Username must be 3-20 chars: letters, numbers, underscore.");
+    throw new Error(
+      "Username must be 3-20 chars: letters, numbers, underscore.",
+    );
   }
 
   const usernameRef = doc(db, "usernames", username);
-  await runTransaction(db, async (tx) => {
+  await runTransaction(db, async tx => {
     const snap = await tx.get(usernameRef);
     if (snap.exists() && snap.data()?.uid !== uid) {
       throw new Error("Username already taken.");
     }
-    tx.set(usernameRef, { uid, username, updatedAt: serverTimestamp() }, { merge: true });
+    tx.set(
+      usernameRef,
+      { uid, username, updatedAt: serverTimestamp() },
+      { merge: true },
+    );
   });
 
   return username;
@@ -52,7 +64,9 @@ export async function ensureUserProfile(fbUser: FirebaseUser) {
   const snap = await getDoc(userRef);
 
   const email = fbUser.email ?? "";
-  const fallbackUsername = email ? normalizeUsername(email.split("@")[0]!) : uid.slice(0, 10);
+  const fallbackUsername = email
+    ? normalizeUsername(email.split("@")[0]!)
+    : uid.slice(0, 10);
 
   if (!snap.exists()) {
     const username = await reserveUsername(fallbackUsername, uid);
@@ -88,7 +102,39 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   return snap.exists() ? (snap.data() as UserProfile) : null;
 }
 
-export async function updateUserProfile(uid: string, patch: Partial<UserProfile>) {
-  await updateDoc(doc(db, "users", uid), { ...patch, updatedAt: serverTimestamp() });
+export async function updateUserProfile(
+  uid: string,
+  patch: Partial<UserProfile>,
+) {
+  await updateDoc(doc(db, "users", uid), {
+    ...patch,
+    updatedAt: serverTimestamp(),
+  });
 }
 
+/** Prefix search on displayName field (case-sensitive Firestore range query). */
+export async function searchUsers(
+  prefix: string,
+  max = 10,
+): Promise<UserProfile[]> {
+  if (!prefix.trim()) return [];
+  const p = prefix.trim();
+  const end =
+    p.slice(0, -1) + String.fromCharCode(p.charCodeAt(p.length - 1) + 1);
+  const q = query(
+    collection(db, "users"),
+    where("displayName", ">=", p),
+    where("displayName", "<", end),
+    orderBy("displayName"),
+    limit(max),
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as UserProfile);
+}
+
+/** Bulk fetch user profiles by array of UIDs. */
+export async function getUsersByUids(uids: string[]): Promise<UserProfile[]> {
+  if (!uids.length) return [];
+  const results = await Promise.all(uids.map(uid => getUserProfile(uid)));
+  return results.filter(Boolean) as UserProfile[];
+}

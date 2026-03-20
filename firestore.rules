@@ -67,7 +67,10 @@ service cloud.firestore {
 
     match /notifications/{uid}/items/{notificationId} {
       allow read: if isMe(uid);
-      allow write: if false; // Functions/Admin only
+      // Allow the recipient to mark notifications as read
+      allow update: if isMe(uid) &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['readAt']);
+      allow create, delete: if false; // Functions/Admin only
     }
 
     match /conversations/{conversationId} {

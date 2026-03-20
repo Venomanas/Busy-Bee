@@ -1,17 +1,21 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    function signedIn() { return request.auth != null; }
-    function isMe(uid) { return signedIn() && request.auth.uid == uid; }
-
+    // Avatars: only the owner can write, public read
     match /avatars/{uid}/{allPaths=**} {
       allow read: if true;
-      allow write: if isMe(uid);
+      allow write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // Post images: any authenticated user can upload, public read
+    match /posts/{postId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Default deny
     match /{allPaths=**} {
       allow read, write: if false;
     }
   }
 }
-

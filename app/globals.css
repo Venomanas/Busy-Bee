@@ -2,33 +2,128 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
-  --bg: 0 0% 100%;
-  --fg: 210 25% 10%;
-  --muted: 210 16% 96%;
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+  /* Strict yellow / black / white palette */
+  --bg: 0 0% 100%; /* white */
+  --fg: 0 0% 7%; /* near-black */
+  --muted: 42 10% 96%; /* warm off-white */
   --card: 0 0% 100%;
-  --border: 210 16% 92%;
-  --brand: 42 96% 49%;
-  --radius: 18px;
+  --border: 42 8% 90%; /* warm light grey */
+  --brand: 42 96% 49%; /* #F4AF01 yellow */
+  --brand-dark: 38 90% 40%; /* darker yellow */
+  --surface: 42 12% 97%; /* barely-yellow white */
+  --ring: 42 96% 65%; /* brighter yellow focus ring */
+  --radius: 16px;
+
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
-html, body{
+html,
+body {
   height: 100%;
 }
 
-body{
+body {
   background: hsl(var(--bg));
   color: hsl(var(--fg));
   font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Respect reduced motion (Framer Motion will follow this too) */
-@media (prefers-reduced-motion: reduce){
-  *, *::before, *::after{
+/* ─── Custom Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--brand) / 0.35);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--brand) / 0.65);
+}
+
+/* ─── Glassmorphism (yellow-tinted glass) ───────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-color: hsl(var(--border));
+}
+
+/* ─── Brand gradient (yellow shades only) ───────────────────── */
+.brand-gradient {
+  background: linear-gradient(
+    135deg,
+    hsl(38 90% 40%) 0%,
+    hsl(42 96% 49%) 50%,
+    hsl(46 100% 62%) 100%
+  );
+}
+
+/* Dark glass: used for sidebar active pill, cover overlays */
+.glass-dark {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ─── Like heart burst ──────────────────────────────────────── */
+@keyframes heartBurst {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.5);
+  }
+  60% {
+    transform: scale(0.9);
+  }
+  80% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.like-burst {
+  animation: heartBurst 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* ─── Skeleton shimmer ──────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    hsl(42 10% 93%) 25%,
+    hsl(42 32% 88%) 50%,
+    hsl(42 10% 93%) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ─── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
   }
 }
-

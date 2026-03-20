@@ -44,13 +44,20 @@ export async function unfollowUser(sourceUid: string, targetUid: string) {
 }
 
 export async function isFollowing(sourceUid: string, targetUid: string) {
-  const snap = await getDoc(doc(db, "follows", sourceUid, "following", targetUid));
+  const snap = await getDoc(
+    doc(db, "follows", sourceUid, "following", targetUid),
+  );
   return snap.exists();
 }
 
 export async function getFollowingUids(uid: string, max = 50) {
   const q = query(collection(db, "follows", uid, "following"), limit(max));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.id);
+  return snap.docs.map(d => d.id);
 }
 
+export async function getFollowers(uid: string, max = 50) {
+  const q = query(collection(db, "follows", uid, "followers"), limit(max));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.id);
+}
